@@ -1,6 +1,6 @@
 ### ChatGPT对话问答
 #### 1. 实际效果
-体验网址：zhongzhaoxie.top     
+体验网址：[zhongzhaoxie.top](zhongzhaoxie.top)     
 账户：huihu        
 密码：123         
 ![](./imgs/1.png)
