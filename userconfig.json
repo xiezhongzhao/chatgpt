@@ -1,0 +1,14 @@
+{
+    "huhui": {
+        "password": "123",
+        "quota": 200,
+        "visited": 0,
+        "remark": "note"
+    },
+    "xzz": {
+        "password": "1234",
+        "quota": 10000,
+        "visited": 0,
+        "remark": "note"
+    }
+}

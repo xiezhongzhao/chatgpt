@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+    <h3>用户登陆</h3>
+    <form action="/login" method="post">
+        <div class="row">
+            <div class="col-4">
+                用户名: <input type="text" class="form-control" name="username">
+                <br/>
+                密码: <input type="password" class="form-control" name="password">
+                <br/>
+                <div id="result">{{message}}</div>
+                <br/>
+                <button type="submit" id="submitbtn" class="btn btn-primary">登录</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+

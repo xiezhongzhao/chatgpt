@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+    <style>
+        #result{
+            padding: 10px;
+            background-color: #eee;
+            margin-top: 30px;
+        }
+    </style>
+    <h3>GPT知识问答</h3>
+    <form action="/chatgpt-clone" method="post">
+        <div class="alert alert-success" id="quota_info"></div>
+        <div class="row">
+            <div class="col-10">
+                <textarea class="form-control" rows="5" cos="20" name="question" id="question"></textarea>
+            </div>
+            <div class="col-2">
+                <br/><br/>
+                <button type="button" id="submitbtn" class="btn btn-primary">提交问题</button>
+            </div>
+        </div>
+        <div id="result">返回结果</div>
+    </form>
+{% endblock %}
+
+
+{% block myjavescript %}
+<script type="text/javascript">
+    $(function(){
+
+        $.ajax({
+            url: "/show_quotas",
+            type: "GET",
+            success:function (data){
+                $("#quota_info").html(data)
+            }
+        })
+
+        $("#submitbtn").click(function(){
+            $("#submitbtn").prop("disabled", true)
+            $("#result").html("请求中，加载中...")
+            {#流式输出结果#}
+            // 用EventSource的方式一直发送GET请求
+            var source = new EventSource("/chatgpt-clone?question="+$("#question").val())
+            var begin_output = false
+            source.onmessage = function(event){
+                if(begin_output == false){
+                    begin_output = true
+                    $("#result").html("")
+                }
+                if(event.data == "[DONE]"){
+                    source.close()
+                    $("#submitbtn").prop("disabled", false)
+                    $.ajax({
+                        url: "/show_quotas",
+                        type: "GET",
+                        success: function (data) {
+                            $("#quota_info").html(data)
+                        }
+                    })
+                }else{
+                    $("#result").html($("#result").html() + event.data) //每次追加数据
+                }
+            }
+
+
+
+            {#一次性输出结果#}
+            {#$.ajax({#}
+            {#    url: "/chatgpt-clone",#}
+            {#    type: "POST",#}
+            {#    data: {"question": $("#question").val()},#}
+            {#    success: function(data){#}
+            {#        $("#result").html(data)#}
+            {#    }#}
+            //{#})#}
+        })
+    })
+</script>
+{% endblock %}
+
+
+
