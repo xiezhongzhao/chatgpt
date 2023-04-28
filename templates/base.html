@@ -1,71 +1,51 @@
-<!doctype html>
-<html lang="zh-CN">
-  <head>
-    <!-- 必须的 meta 标签 -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- 必须的 meta 标签 -->
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Bootstrap 的 CSS 文件 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+        <!-- 标签页图标显示 -->
+        <link rel="shortcut icon" href="{{url_for('static', filename='asset/favicon-32x32.png') }}" type="image/x-icon">
 
-    <title>ChatGPT知识问答</title>
-      <style>
-        #topnav{
-            background-color:#000;
-            color: #fff;
-            padding-top: 10px;
-            padding-bottom: 10px;
-            margin-bottom: 2px;
-        }
-        #topnav2{
-            background-color:#777;
-            color: #fff;
-            padding-top: 10px;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        #topnav2 a{
-            color: #fff;
-            font-size: 18px;
-        }
+        <title>ChatGPT知识问答</title>
+        <!-- 登录页面的CSS文件 -->
+        <link rel="stylesheet" href="../static/style.css">
 
-      </style>
-  </head>
-  <body>
-    <div id="topnav" class="container-fluid">
-        <div class="row">
-            <div class="col-8">
-                <h2>ChatGPT网站</h2>
-            </div>
-            <div class="col-4">
-                <span>{{ session["username"] }}</span>
-                <a href="/logout">退出登录</a>
-            </div>
+        <!-- Bootstrap 的 CSS 文件 -->
+        <link rel="stylesheet" href="../static/plugins/bootstrap-3.4.1/css/bootstrap.min.css">
+{#        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">#}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/styles/a11y-dark.min.css">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script src="https://cdn.staticfile.org/clipboard.js/2.0.4/clipboard.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script>
+        <!-- and it's easy to individually load additional languages -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/languages/go.min.js"></script>
+    </head>
+
+    <body>
+        <div class="container-fluid">
+            <div id="login_content">{% block login_content%}{% endblock %}</div>
         </div>
-    </div>
-
-    <div class="container-fluid" id="topnav2">
-        <a href="/">ChatGPT Clone </a>>
-        <a href="/">其他 </a>>
-    </div>
-
-    <div class="container-fluid">
-        <div id="content">{% block content %}{% endblock %}</div>
-    </div>
-
-    <!-- JavaScript 文件是可选的。从以下两种建议中选择一个即可！ -->
+        <div class="container-fluid">
+            <div id="chat_content">{% block chat_content %}{% endblock %}</div>
+        </div>
+    </body>
 
     <!-- 选项 1：jQuery 和 Bootstrap 集成包（集成了 Popper） -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" ></script>
 
-    {% block myjavescript %} {% endblock %}
+    {% block chatjavascript%}{% endblock %}
+    {% block myjavascript %} {% endblock %}
 
-    <!-- 选项 2：Popper 和 Bootstrap 的 JS 插件各自独立 -->
-    <!--
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-Lge2E2XotzMiwH69/MXB72yLpwyENMiOKX8zS8Qo7LDCvaBIWGL+GlRQEKIpYR04" crossorigin="anonymous"></script>
-    -->
-  </body>
 </html>
+
+
+
+
+
+
+

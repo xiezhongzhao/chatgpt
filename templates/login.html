@@ -1,16 +1,36 @@
 {% extends "base.html" %}
-{% block content %}
-    <h3>用户登陆</h3>
+{% block login_content %}
     <form action="/login" method="post">
-        <div class="row">
-            <div class="col-4">
-                用户名: <input type="text" class="form-control" name="username">
-                <br/>
-                密码: <input type="password" class="form-control" name="password">
-                <br/>
-                <div id="result">{{message}}</div>
-                <br/>
-                <button type="submit" id="submitbtn" class="btn btn-primary">登录</button>
+        <div class="box">
+            <div class="content">
+                <div class="login-wrapper">
+                    <h1>登录</h1>
+                    <div class="login-form">
+                        <div class="username form-item">
+                            <span>账号</span>
+                            <input type="text" class="input-item" name="username">
+                        </div>
+                        <div class="password form-item">
+                            <span>密码</span>
+                            <input type="password" class="input-item" name="password">
+                        </div>
+                         <div id="result">{{message}}</div>
+                        <button type="submit" id="submitbtn" class="login-btn">登录</button>
+                    </div>
+                    <div class="divider">
+                        <span class="line"></span>
+                        <span class="divider-text">其他方式登录</span>
+                        <span class="line"></span>
+                    </div>
+                    <div class="other-login-wrapper">
+                        <div class="other-login-item">
+                            <img src="../static/asset/QQ.png" alt="">
+                        </div>
+                        <div class="other-login-item">
+                            <img src="../static/asset/WeChat.png" alt="">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </form>
