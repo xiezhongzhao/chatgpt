@@ -17,7 +17,7 @@ import threading
 import asyncio
 
 import userconfig
-openai.api_key = "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"
+openai.api_key = "sk-8uv2FNZpydi98uNFOaPGT3BlbkFJfP1aT2knhk1xLwmUK9R"
 
 app = Flask(__name__)
 app.config['SECRET_KEY']  = os.urandom(24)
