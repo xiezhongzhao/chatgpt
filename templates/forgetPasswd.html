@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block forgetPasswd_content %}
+    <form action="/forgetPasswd" method="post">
+        <div class="box">
+            <div class="content">
+                <div class="login-wrapper">
+                    <h1>找回密码</h1>
+                    <div class="login-form">
+                        <div class="username form-item">
+                            <label>电子邮件地址</label>
+                            <input type="text" id="username" name="username" required="required" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_code">邮箱验证码</label>
+                            <div class="row">
+                                <div class="col-xs-7">
+                                    <input type="text" name="email_code" required="required" class="form-control"
+                                           placeholder="请输入5位验证码" id="email_code">
+                                    <span style="color:red"></span>
+                                </div>
+                                <div class="col-xs-5">
+                                    <button type="button" onclick="sendMail();" id="send_code" class="btn btn-primary">发送验证码</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="password form-item">
+                            <label>请输入密码</label>
+                            <input type="password" name="password" required="required" class="form-control">
+                        </div>
+                        <div class="password form-item">
+                            <label>请再次输入密码</label>
+                            <input type="password" name="password_again" required="required" class="form-control">
+                        </div>
+                        <div id="result">{{message}}</div>
+                        <button type="submit" id="submitbtn" class="login-btn">保存修改</button>
+                    </div>
+                    <div class="divider">
+                        <span class="line"></span>
+                        <a href="/login">返回登录界面</a>
+                        <span class="line"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block passwdjavascript %}
+    <script type="text/javascript">
+        $("#send_code").click(function () {
+           console.log("click")
+           $.ajax({
+                url: "/sendMail",
+                type: "POST",
+                data: {"username": $("#username").val()},
+                dataType: "json",
+                success: function (result){
+                    console.log($("#username").val())
+                    if(result.message = "success"){
+                        $("#result").html(result.message)
+                        alert(result.message)
+                    }
+                    else{
+                        $("#result").html(result.message)
+                        alert(result.message)
+                    }
+                }
+            });
+        })
+
+        // $(function () {
+        //     $("#send_code").click(function () {
+        //         $("#result").html("邮件已发送")
+        //         $("send_code").prop("disabled", true)
+        //     })
+        // })
+    </script>
+{% endblock %}
+
+
+
+

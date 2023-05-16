@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block register_content %}
+    <form action="/register" method="post">
+        <div class="box">
+            <div class="content">
+                <div class="login-wrapper">
+                    <h1>注册</h1>
+                    <div class="login-form">
+                        <div class="username form-item">
+                            <label>电子邮件地址</label>
+                            <input type="text" id="username" name="username" required="required"  class="form-control">
+                        </div>
+                        <div class="password form-item">
+                            <label>请输入密码</label>
+                            <input type="password" id="password" name="password" required="required" class="form-control">
+                        </div>
+                        <div class="password form-item">
+                            <label>请再次输入密码</label>
+                            <input type="password" id="password_again" name="password_again" required="required" class="form-control">
+                        </div>
+                        <div id="result">{{message}}</div>
+                        <button type="submit" id="register" class="login-btn">注册</button>
+                    </div>
+                    <div class="divider">
+                        <span class="line"></span>
+                        <a href="/login">返回登录界面</a>
+                        <span class="line"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block registerjavascript %}
+<!--<script type="text/javascript">-->
+<!--        $(function () {-->
+<!--            $("#register").click(function () {-->
+<!--                $.ajax({-->
+<!--                    url: "/register",-->
+<!--                    type: "POST",-->
+<!--                    data: {"username": $("#username").val(),-->
+<!--                           "password": $("#password").val(),-->
+<!--                           "password_again": $("#password_again").val()},-->
+<!--                    success: function (result){-->
+<!--                        if(result.message = "success"){-->
+<!--                            alert("注册成功")-->
+<!--                            // $("#result").html("注册成功")-->
+<!--                        }else{-->
+<!--                            alert("注册失败")-->
+<!--                            // $("#result").html("注册失败")-->
+<!--                        }-->
+<!--                    }-->
+<!--                });-->
+<!--            })-->
+<!--        })-->
+<!--    </script>-->
+
+{% endblock %}
+

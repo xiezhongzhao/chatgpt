@@ -1,0 +1,56 @@
+{
+    "chats": {
+        "0": {
+            "name": "默认对话",
+            "chat_with_history": "",
+            "have_chat_context": "",
+            "messages_history": [
+                {
+                    "role": "openai",
+                    "content": "您想聊什么？"
+                },
+                {
+                    "role": "user",
+                    "content": "马云是谁？"
+                },
+                {
+                    "role": "user",
+                    "content": "python实现relu激活函数"
+                },
+                {
+                    "role": "openai",
+                    "content": "```\ndef relu(x):\n    return max(0, x)\n```\n\n或者使用numpy库来实现：\n\n```\nimport numpy as np\n\ndef relu(x):\n    return np.maximum(0, x)\n```"
+                },
+                {
+                    "role": "user",
+                    "content": "用C++实现softmax函数"
+                },
+                {
+                    "role": "openai",
+                    "content": "以下是使用C++实现softmax函数的示例代码：\n\n```cpp\n#include <iostream>\n#include <vector>\n#include <cmath>\n\nstd::vector<double> softmax(std::vector<double> x) {\n    std::vector<double> result;\n    double sum = 0;\n    for(int i = 0; i < x.size(); i++) {\n        sum += std::exp(x[i]);\n    }\n    for(int i = 0; i < x.size(); i++) {\n        result.push_back(std::exp(x[i])/sum);\n    }\n    return result;\n}\n\nint main() {\n    // Example usage\n    std::vector<double> input = {1, 2, 3, 4, 5};\n    std::vector<double> output = softmax(input);\n    std::cout << \"Input vector: \";\n    for(auto& i : input) {\n        std::cout << i << \" \";\n    }\n    std::cout << std::endl;\n    std::cout << \"Softmax Output: \";\n    for(auto& i : output) {\n        std::cout << i << \" \";\n    }\n    std::cout << std::endl;\n    return 0;\n}\n```\n\n在上面的代码中，我们定义了一个软最大函数softmax，该函数接受一个double类型的vector作为输入向量。我们使用std::exp函数计算输入向量中每个元素的指数，并将它们相加以得到总和。我们然后遍历输入向量中的每个元素，并将每个元素的指数除以总和，得到归一化的概率向量；该向量即为所需的softmax输出。最后，我们在main函数中使用该函数来计算输入向量的softmax输出，并打印结果。"
+                },
+                {
+                    "role": "user",
+                    "content": "用C++实现softmax函数"
+                }
+            ]
+        },
+        "60d8ae08-f3bf-11ed-af72-001a7dda7111": {
+            "name": "test2",
+            "chat_with_history": "",
+            "have_chat_context": "",
+            "messages_history": [
+                {
+                    "role": "user",
+                    "content": "如何挑选基金，每年能够达到10%以上的收益"
+                },
+                {
+                    "role": "openai",
+                    "content": "挑选基金的过程需要考虑以下几个方面：\n\n1.选择优质的基金公司。选择一家具有良好声誉和正规经营许可的基金公司，这可以避免投资人的资金受到损失。\n\n2.选择业绩优秀的基金。通过查看基金的历史表现和近期业绩，挑选具有良好业绩的基金。\n\n3.选择与自身风险偏好相匹配的基金。不同的基金有不同的风险和收益特点，选择符合自身风险偏好的基金可以降低投资风险。\n\n4.在投资周期内保持持续性的心态。长期坚持投资，避免短期行情的影响，才能获取更高的收益。\n\n以上是挑选基金的一些常见方法与技巧，但如何达到每年10%以上的收益需要根据市场行情和自身实际情况做出更为具体的分析和决策。"
+                }
+            ]
+        }
+    },
+    "selected_chat_id": "0",
+    "default_chat_id": "0"
+}

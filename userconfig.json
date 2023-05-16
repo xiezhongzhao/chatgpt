@@ -1,13 +1,31 @@
 {
-    "test": {
+    "xiezhongzhao@qq.com": {
         "password": "123",
-        "quota": 200,
-        "visited": 42,
+        "quota": 50,
+        "visited": 10,
         "remark": "note"
     },
-    "chenshu": {
+    "2234309583@qq.com": {
+        "password": "123",
+        "quota": 100,
+        "visited": 82,
+        "remark": "note"
+    },
+    "xiezhongzhao01@gmail.com": {
         "password": "1234",
-        "quota": 10000,
+        "quota": 5,
+        "visited": 0,
+        "remark": "note"
+    },
+    "zhongzhaoxie@qq.com": {
+        "password": "123",
+        "quota": 5,
+        "visited": 0,
+        "remark": "note"
+    },
+    "huhui@qq.com": {
+        "password": "12345",
+        "quota": 5,
         "visited": 0,
         "remark": "note"
     }

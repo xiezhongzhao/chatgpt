@@ -7,28 +7,43 @@
                     <h1>登录</h1>
                     <div class="login-form">
                         <div class="username form-item">
-                            <span>账号</span>
-                            <input type="text" class="input-item" name="username">
+                            <label>电子邮件地址</label>
+                            <input type="text" id="username" name="username" required="required" class="form-control">
                         </div>
                         <div class="password form-item">
-                            <span>密码</span>
-                            <input type="password" class="input-item" name="password">
+                            <label>密码</label>
+                            <input type="password" name="password" required="required" class="form-control">
                         </div>
-                         <div id="result">{{message}}</div>
+                        <div class="form-group">
+                            <label for="id_code">图片验证码</label>
+                            <div class="row">
+                                <div class="col-xs-7">
+                                    <input type="text" name="code" class="form-control"
+                                           placeholder="请输入图片验证码" required="" id="id_code">
+                                    <span style="color:red"></span>
+                                </div>
+                                <div class="col-xs-5">
+                                    <img src="/captcha" onclick="this.src='/captcha?'+Math.random()">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="result">{{message}}</div>
                         <button type="submit" id="submitbtn" class="login-btn">登录</button>
                     </div>
                     <div class="divider">
                         <span class="line"></span>
-                        <span class="divider-text">其他方式登录</span>
+                        <a href="/forgetPasswd">找回密码</a>
+                        <p class="p1">　　</p>
+                        <a href="/register">注册账号</a>
                         <span class="line"></span>
                     </div>
                     <div class="other-login-wrapper">
-                        <div class="other-login-item">
-                            <img src="../static/asset/QQ.png" alt="">
-                        </div>
-                        <div class="other-login-item">
-                            <img src="../static/asset/WeChat.png" alt="">
-                        </div>
+<!--                        <div class="other-login-item">-->
+<!--                            <img src="../static/asset/QQ.png" alt="">-->
+<!--                        </div>-->
+<!--                        <div class="other-login-item">-->
+<!--                            <img src="../static/asset/WeChat.png" alt="">-->
+<!--                        </div>-->
                     </div>
                 </div>
             </div>

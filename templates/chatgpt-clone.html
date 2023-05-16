@@ -1,705 +1,758 @@
 {% extends "base.html" %}
 {% block chat_content %}
-    <style>
-        #result {
-            padding: 10px;
-            background-color: #eee;
-            margin-top: 30px;
-        }
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
 
-        #topnav {
-            background-color: #000;
-            color: #fff;
-            padding-top: 10px;
-            padding-bottom: 10px;
-            margin-bottom: 2px;
-        }
+    .all-container {
+        position: absolute;
+        height: 90%;
+        width: 90%;
+        padding: 1px;
+        display: flex;
+        border: #aaaaaa;
+        flex-flow: row;
+        justify-content: center;
+        margin-right: 1px;
+        align-items: center;
+    }
 
-        #topnav2 {
-            background-color: #777;
-            color: #fff;
-            padding-top: 10px;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
+    .left-container {
+        height: 85%;
+        width: 16%;
+        min-width: 100px;
+        max-width: 200px;
+        border-radius: 4px;
+        border: 0.5px solid #D0D0D0;
+        background-color: #EEEEEE;
+        display: flex;
+        flex-flow: column;
+    }
 
-        #topnav2 a {
-            color: #fff;
-            font-size: 18px;
-        }
+    .chat-list {
+        overflow-y: scroll;
+        flex: 1;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-        }
+    .chat-list .selected {
+        background-color: #D0D0D0;
+    }
 
-        .all-container {
-            position: absolute;
-            height: 90%;
-            width: 90%;
-            padding: 1px;
-            display: flex;
-            border: #aaaaaa;
-            flex-flow: row;
-        {#justify-content: center;#}{#align-items: center;#} margin-left: 1px;
-            margin-right: 1px;
-        }
+    .chat-list::-webkit-scrollbar {
+        display: none;
+    }
 
-        .left-container {
-            height: 85%;
-            width: 16%;
-            min-width: 60px;
-        {#max-width: 400px;#} border-radius: 4px;
-            border: 0.5px solid #D0D0D0;
-            background-color: #EEEEEE;
-            display: flex;
-            flex-flow: column;
-        }
+    .chat, .newchat {
+        border-bottom: 0.5px solid #cccccc;
+        border-top: 0.5px solid #cccccc;;
+        background-color: #EFEFEF;
+        padding: 10px;
+    }
 
-        .chat-list {
-        {#width: 100%;#} overflow-y: scroll;
-            flex: 1;
-        }
+    .chat, .defaultchat {
+        border-bottom: 0.5px solid #cccccc;
+        border-top: 0.5px solid #cccccc;;
+        background-color: #EFEFEF;
+        padding: 10px;
+    }
 
-        .chat-list .selected {
-            background-color: #D0D0D0;
-        }
+    .defaultchat {
+        color: #0f0f0f;
+    }
 
-        .chat-list::-webkit-scrollbar {
-            display: none;
-        }
+    .newchat {
+        color: #317d8a;
+    }
 
-        .chat, .newchat {
-            border-bottom: 0.5px solid #cccccc;
-            border-top: 0.5px solid #cccccc;;
-            background-color: #EFEFEF;
-            padding: 10px;
-        }
+    .newchat:hover {
+        background-color: #E8E8E8;
+    }
 
-        .newchat {
-            color: #317d8a;
-        }
+    .chat:hover {
+        background-color: #E8E8E8;
+    }
 
-        .newchat:hover {
-            background-color: #E8E8E8;
-        }
+    .right-container {
+        height: 85%;
+        width: 80%;
+        min-width: 220px;
+        border-radius: 4px;
+        border: 0.5px solid #cccccc;
+        background-color: #f5f5f5;
+        display: flex;
+        flex-flow: column;
+        overflow: hidden;
+    }
 
-        .chat:hover {
-            background-color: #E8E8E8;
-        }
+    .content {
+        width: calc(100% - 40px);
+        padding: 20px;
+        overflow-y: scroll;
+        flex: 1;
+    }
 
-        .right-container {
-            height: 85%;
-            width: 80%;
-            min-width: 220px;
-            border-radius: 4px;
-            border: 0.5px solid #cccccc;
-            background-color: #f5f5f5;
-            display: flex;
-            flex-flow: column;
-            overflow: hidden;
-        }
+    /* 设置滚动条的样式 */
+    .content::-webkit-scrollbar {
+        width: 10px;
+    }
 
-        .content {
-            width: calc(100% - 40px);
-            padding: 20px;
-            overflow-y: scroll;
-            flex: 1;
-        }
+    /* 滚动槽 */
+    .content::-webkit-scrollbar-track {
+        border-radius: 8px;
+    }
 
-        /* 设置滚动条的样式 */
-        .content::-webkit-scrollbar {
-            width: 10px;
-        }
+    /* 滚动条滑块 */
+    .content::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0);
+    }
 
-        /* 滚动槽 */
-        .content::-webkit-scrollbar-track {
-            border-radius: 8px;
-        }
+    /* 滚动条滑块移入显示 */
+    .content:hover::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.1);
+    }
 
-        /* 滚动条滑块 */
-        .content::-webkit-scrollbar-thumb {
-            border-radius: 10px;
-            background: rgba(0, 0, 0, 0);
-        }
+    .bubble {
+        max-width: 500px;
+        padding-top: 10px;
+        padding-left: 25px;
+        padding-bottom: 10px;
+        padding-right: 20px;
+        /*padding: 15;*/
+        border-radius: 5px;
+        position: relative;
+        color: #000;
+        word-wrap: break-word;
+        word-break: normal;
+    }
 
-        /* 滚动条滑块移入显示 */
-        .content:hover::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.1);
-        }
+    .item-left .bubble {
+        margin-left: 15px;
+        background-color: #fff;
+    }
 
-        .bubble {
-            max-width: 500px;
-            padding: 10px;
-            border-radius: 5px;
-            position: relative;
-            color: #000;
-            word-wrap: break-word;
-            word-break: normal;
-        }
+    .item-left .bubble:before {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-left: 10px solid transparent;
+        border-top: 10px solid transparent;
+        border-right: 10px solid #fff;
+        border-bottom: 10px solid transparent;
+        left: -20px;
+    }
 
-        .item-left .bubble {
-            margin-left: 15px;
-            background-color: #fff;
-        }
+    .item-right .bubble {
+        margin-right: 15px;
+        background-color: #9eea6a;
+    }
 
-        .item-left .bubble:before {
-            content: "";
-            position: absolute;
-            width: 0;
-            height: 0;
-            border-left: 10px solid transparent;
-            border-top: 10px solid transparent;
-            border-right: 10px solid #fff;
-            border-bottom: 10px solid transparent;
-            left: -20px;
-        }
+    .item-right .bubble:before {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-left: 10px solid #9eea6a;
+        border-top: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        right: -20px;
+    }
 
-        .item-right .bubble {
-            margin-right: 15px;
-            background-color: #9eea6a;
-        }
+    .item {
+        margin-top: 15px;
+        display: flex;
+        width: 100%;
+    }
 
-        .item-right .bubble:before {
-            content: "";
-            position: absolute;
-            width: 0;
-            height: 0;
-            border-left: 10px solid #9eea6a;
-            border-top: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-bottom: 10px solid transparent;
-            right: -20px;
-        }
+    .item.item-right {
+        justify-content: flex-end;
+    }
 
-        .item {
-            margin-top: 15px;
-            display: flex;
-            width: 100%;
-        }
+    .item.item-center {
+        justify-content: center;
+    }
 
-        .item.item-right {
-            justify-content: flex-end;
-        }
+    .item.item-center span {
+        font-size: 12px;
+        padding: 2px 4px;
+        color: #fff;
+        background-color: #dadada;
+        border-radius: 3px;
+        -moz-user-select: none; /*火狐*/
+        -webkit-user-select: none; /*webkit浏览器*/
+        -ms-user-select: none; /*IE10*/
+        -khtml-user-select: none; /*早期浏览器*/
+        user-select: none;
+    }
 
-        .item.item-center {
-            justify-content: center;
-        }
+    .avatar img {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+    }
 
-        .item.item-center span {
-            font-size: 12px;
-            padding: 2px 4px;
-            color: #fff;
-            background-color: #dadada;
-            border-radius: 3px;
-            -moz-user-select: none; /*火狐*/
-            -webkit-user-select: none; /*webkit浏览器*/
-            -ms-user-select: none; /*IE10*/
-            -khtml-user-select: none; /*早期浏览器*/
-            user-select: none;
-        }
+    .input-area {
+        border-top: 0.5px solid #e0e0e0;
+        height: 150px;
+        display: flex;
+        flex-flow: column;
+        background-color: #fff;
+    }
 
-        .avatar img {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-        }
+    textarea {
+        flex: 1;
+        padding: 5px;
+        font-size: 14px;
+        border: none;
+        cursor: pointer;
+        overflow-y: auto;
+        overflow-x: hidden;
+        outline: none;
+        resize: none;
+    }
 
-        .input-area {
-            border-top: 0.5px solid #e0e0e0;
-            height: 150px;
-            display: flex;
-            flex-flow: column;
-            background-color: #fff;
-        }
+    button {
+        margin-left: 5px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        padding: 10px;
+        height: 35px;
+    }
 
-        textarea {
-            flex: 1;
-            padding: 5px;
-            font-size: 14px;
-            border: none;
-            cursor: pointer;
-            overflow-y: auto;
-            overflow-x: hidden;
-            outline: none;
-            resize: none;
-        }
+    .send-btn {
 
-        button {
-            margin-left: 5px;
-            margin-right: 5px;
-            padding: 10px;
-            height: ;
-        }
+    }
 
-        .button-area {
-            display: flex;
-            min-height: 40px;
-            margin-right: 10px;
-            line-height: 40px;
-            padding: 5px;
-            justify-content: flex-end;
-        }
+    .button-area {
+        display: flex;
+        min-height: 40px;
+        margin-right: 10px;
+        line-height: 40px;
+        padding: 5px;
+        justify-content: flex-end;
+    }
 
-        {#markdown列表样式#}
-        .markdown ol, .markdown ul {
-            padding-left: 1.5em;
-        }
+    .button-area button {
+        max-width: 80px;
+        border: none;
+        outline: none;
+        border-radius: 4px;
+        float: right;
+        cursor: pointer;
+    }
 
-        .markdown ol {
-            list-style-type: decimal;
-        }
+    .button-area #chmod-btn, .button-area #del-btn {
+        max-width: 120px;
+    }
 
-        .markdown ul {
-            list-style-type: disc;
-        }
+    .button-area button:hover {
+        background-color: #e0e0e0;
+    }
 
-        {#markdown代码样式 包含行号#}
-        .markdown pre {
-            padding: 0.5em;
-            overflow: auto;
-            background-color: #2b2b2b;
-            border-radius: 4px;
-        }
+    .button-area button:active {
+        background-color: #bdbdbd;
+    }
 
-        .markdown pre code {
-            background-color: #2b2b2b;
-            padding: .1rem .1rem;
-            color: #f8f8f2;
-        }
+    #markdown列表样式
+    .markdown ol, .markdown ul {
+        padding-left: 1.5em;
+    }
 
-        {#代码复制按钮格式#}
-        .markdown pre .code-copy-btn {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            -khtml-user-select: none;
-            user-select: none;
-            position: absolute;
-            right: 12px;
-            font-size: 12px;
-            line-height: 1;
-            cursor: pointer;
-            color: hsla(0, 0%, 54.9%, .8);
-            transition: color .1s;
-        }
+    .markdown ol {
+        list-style-type: decimal;
+    }
 
-        {#行内代码段样式#}
-        .markdown code {
-            color: #c7254e;
-            background-color: #f9f2f4;
-            border-radius: 2px;
-            padding: .25rem .25rem;
-        }
+    .markdown ul {
+        list-style-type: disc;
+    }
 
-        .menu {
-            position: absolute;
-            top: 0;
-            right: 0;
-            padding: 0;
-            display: none;
-        }
+    #markdown代码样式
+    .markdown pre {
+        padding: 0.5em;
+        overflow: auto;
+        background-color: #2b2b2b;
+        border-radius: 4px;
+    }
 
-        .menu button {
-            width: 60px;
-            height: 25px;
-            padding: 2px;
-            font-size: 6px;
-            border: 1px solid #A0A0A0;
-            border-radius: 4px;
-            outline: none;
-            background-color: #fff;
-            cursor: pointer;
-            display: none;
-        }
+    .markdown pre code {
+        background-color: #2b2b2b;
+        padding: .1rem .1rem;
+        color: #f8f8f2;
+    }
 
-    </style>
-    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/marked.min.js') }}"></script>
+    #代码复制按钮格式
+    .markdown pre .code-copy-btn {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -khtml-user-select: none;
+        user-select: none;
+        position: absolute;
+        right: 12px;
+        font-size: 12px;
+        line-height: 1;
+        cursor: pointer;
+        color: hsla(0, 0%, 54.9%, .8);
+        transition: color .1s;
+    }
 
-    <!-- 导航条-->
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
+    #行内代码段样式
+    .markdown code {
+        color: #c7254e;
+        background-color: #f9f2f4;
+        border-radius: 2px;
+        padding: .25rem .25rem;
+    }
+
+    .menu {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 0;
+        display: none;
+    }
+
+    .menu button {
+        width: 60px;
+        height: 25px;
+        padding: 2px;
+        font-size: 6px;
+        border: 1px solid #A0A0A0;
+        border-radius: 4px;
+        outline: none;
+        background-color: #fff;
+        cursor: pointer;
+        display: none;
+    }
+
+</style>
+
+<!-- 导航条-->
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">首页</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">ChatGPT<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li class="active"><a href="#">GPT-3.5-turbo</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">GPT-4</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">GPT-5</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">余额:<span id="quota_info"></span></a></li>
+                <li>
+                    <a href="#">
+                        充值
+                        <img src="../static/asset/cash-coin.svg">
+                    </a>
+                </li>
+                <li><a href="#">{{session["username"]}}</a></li>
+                <li>
+                    <a href="/login">
+                        <img src="../static/asset/box-arrow-right.svg">
+                        <span style="vertical-align: middle;">退出登录</span>
+                    </a>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+<!--聊天界面-->
+<div class="all-container">
+    <div class="left-container">
+        <div class="chat-list">
+            <div class="newchat" id="newchat">
+                <img src="../static/asset/plus-square-dotted.svg">
+                <span style="vertical-align: middle;"> 新建对话</span>
+            </div>
+        </div>
+    </div>
+    <div class="right-container">
+        <div class="content">
+            <div class="item item-left">
+                <!-- <div class="avatar"><img src="../static/asset/chatgpt.png"/></div>-->
+                <!-- <div class="bubble bubble-left markdown">你好呀，想聊什么呢？</div>-->
+            </div>
+        </div>
+        <div class="input-area">
+            <textarea name="text" id="textarea"></textarea>
+            <div class="button-area">
+                <button id="stop-btn" class="btn btn-primary" style="display: none">停止生成</button>
+                <button id="del-btn" class="btn btn-primary">删除聊天记录</button>
+                <button id="chmod-btn" class="btn btn-primary">当前为普通对话</button>
+                <button id="send-btn" name="send-btn" class="btn btn-primary">
+                    <span>发 送</span>
+                    <img src="../static/asset/send.svg">
                 </button>
-                <a class="navbar-brand" href="/">首页</a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                </ul>
-
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                           aria-expanded="false">ChatGPT<span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li class="active"><a href="#">GPT-3.5-turbo</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="#">GPT-4</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="#">GPT-5</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="#">余额:<span id="quota_info"></span></a></li>
-                    <li><a href="#">充值</a></li>
-                    <li><a href="/logout">用户{{ session["username"] }}/退出登录</a></li>
-                </ul>
-            </div><!-- /.navbar-collapse -->
-        </div><!-- /.container-fluid -->
-    </nav>
-
-    {#    <div id="topnav" class="container-fluid">#}
-    {#        <div class="row">#}
-    {#            <div class="col-8">#}
-    {#                <h2>ChatGPT网站</h2>#}
-    {#            </div>#}
-    {#            <div class="col-4">#}
-    {#                <span>{{ session["username"] }}</span>#}
-    {#                <a href="/logout">退出登录</a>#}
-    {#            </div>#}
-    {#        </div>#}
-    {#    </div>#}
-
-    {#    <div id="topnav2" class="container-fluid">#}
-    {#        <a href="/">ChatGPT Clone </a>>#}
-    {#        <a href="/">其他 </a>>#}
-    {#    </div>#}
-
-    <div class="all-container">
-        <div class="left-container">
-            <div class="chat-list">
-                <div class="newchat" id="newchat">添加新的对话</div>
-            </div>
-        </div>
-        <div class="right-container">
-            <div class="content">
-                <div class="item item-left">
-                    <div class="avatar"><img src="../static/asset/chatgpt.png"/></div>
-                    <div class="bubble bubble-left markdown">你好呀，想聊什么呢？</div>
-                </div>
-            </div>
-            <div class="input-area">
-                <textarea name="text" id="textarea"></textarea>
-                <div class="button-area">
-                    {#                    <button type="button" id="stop-btn" class="btn btn-primary" style="display: none">停止生成</button>#}
-                    {#                    <button id="del-btn" class="btn btn-primary">删除聊天记录</button>#}
-                    {#                    <button id="chmod-btn" class="btn btn-primary">当前为普通对话</button>#}
-                    <button id="send-btn" class="btn btn-primary">发 送</button>
-                </div>
             </div>
         </div>
     </div>
-    {# 当移动到消息框时显示的复制按钮 #}
-    {# 默认不显示，由js控制显示#}
-    <div class="menu" id="menu">
-        <button class="menu-btn" id="copy-btn">复制</button>
-        <button class="menu-btn" id="resend-btn">重新发送</button>
-    </div>
-
-    {#    <h3>GPT知识问答</h3>#}
-    {#    <form action="/chatgpt-clone" method="post">#}
-    {#        <div class="alert alert-success" id="quota_info"></div>#}
-    {#        <div class="row">#}
-    {#            <div class="col-10">#}
-    {#                <textarea class="form-control" rows="5" cos="20" name="question" id="question"></textarea>#}
-    {#            </div>#}
-    {#            <div class="col-2">#}
-    {#                <br/><br/>#}
-    {#                <button type="button" id="submitbtn" class="btn btn-primary">提交问题</button>#}
-    {#            </div>#}
-    {#        </div>#}
-    {#        <div id="result">返回结果</div>#}
-    {#    </form>#}
-
+</div>
+{# 当移动到消息框时显示的复制按钮 #}
+{# 默认不显示，由js控制显示#}
+<div class="menu" id="menu">
+    <button class="menu-btn" id="copy-btn">复制</button>
+    <button class="menu-btn" id="resend-btn">重新发送</button>
+</div>
 {% endblock %}
 
 {% block chatjavascript %}
-    <script>
-        MathJax.Hub.Config({        // 公式配置
-            showProcessingMessages: false, //关闭js加载过程信息
-            messageStyle: "none", //不显示信息
-            jax: ["input/TeX", "output/HTML-CSS"],
-            tex2jax: {
-                inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
-                displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
-                skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
-            },
-            "HTML-CSS": {
-                availableFonts: ["STIX", "TeX"], //可选字体
-                showMathMenu: false //关闭右击菜单显示
-            }
-        });
-    </script>
+<script>
+    hljs.initHighlightingOnLoad();
+    // 设置marked
+    marked.marked.setOptions({
+        renderer: new marked.Renderer(),
+        highlight: function (code) {
+            return hljs.highlightAuto(code).value;
+        },
+        pedantic: false,
+        gfm: true,
+        tables: true,
+        breaks: false,
+        sanitize: false,
+        smartLists: true,
+        smartypants: false,
+        xhtml: false
+    });
+</script>
 
-    <script type="text/javascript">
-
-        // 当鼠标移动到 bubble-left时显示复制按钮
-        $(document).on("mouseover", ".bubble-left", function () {
-            let copyBtn = $("#menu");
-            let copyBtnItem = $("#copy-btn");
-            let offset = $(this).offset();
-            // 右上角显示
-            $("#resend-btn").hide();
-            copyBtnItem.show();
-            copyBtn.css("display", "block");
-            copyBtn.css("top", offset.top);
-            copyBtn.css("left", offset.left + $(this).width() - copyBtnItem.width() + 10);
-            // 设置复制内容
-            copyBtnItem.attr("data-clipboard-text", $(this).text());
-        });
-        // 移出bubble-left和菜单按钮时才恢复
-        $(document).on("mouseleave", ".bubble-left", function () {
-            // 若进入了菜单按钮 不关闭
-            {#if (toElement.className === "menu-btn") {#}
-            {#    return;#}
-            {#} else
-                {#}
-                    {#    $("#menu").css("display", "none");#}
-                    {#}#}
-                    }
-                );
-        $(document).on("mouseleave", "#menu", function () {
+<script>
+   // 当鼠标移动到 bubble-left时显示复制按钮
+    $(document).on("mouseover", ".bubble-left", function () {
+        let copyBtn = $("#menu");
+        let copyBtnItem = $("#copy-btn");
+        let offset = $(this).offset();
+        // 右上角显示
+        $("#resend-btn").hide();
+        copyBtnItem.show();
+        copyBtn.css("display", "block");
+        copyBtn.css("top", offset.top);
+        copyBtn.css("left", offset.left + $(this).width() - copyBtnItem.width() + 10);
+        // 设置复制内容
+        copyBtnItem.attr("data-clipboard-text", $(this).text());
+    });
+    // 移出bubble-left和菜单按钮时才恢复
+    $(document).on("mouseleave", ".bubble-left", function () {
+        // 若进入了菜单按钮 不关闭
+        if (event.toElement.className === "menu-btn") {
+            return;
+        } else {
             $("#menu").css("display", "none");
-        });
-        $(document).on("click", "#copy-btn", function () {
-            let clipboard = new ClipboardJS('#copy-btn');
-            clipboard.on('success', function (e) {
-                console.log(e);
-                // 将显示字符更改为复制成功，一秒后改回
-                $("#copy-btn").text("复制成功");
-                setTimeout(function () {
-                    $("#copy-btn").text("复制");
-                }, 2000);
-            });
-            clipboard.on('error', function (e) {
-                console.log(e);
-            });
-            // 光标回归
-            $("#textarea").focus();
-        });
-
-        // 当鼠标移动到 bubble-right时显示重发按钮
-        $(document).on("mouseover", ".bubble-right", function () {
-            let menu = $("#menu");
-            let resendBtn = $("#resend-btn");
-            let offset = $(this).offset();
-            // 右上角显示
-            $("#copy-btn").hide();
-            resendBtn.show();
-            menu.css("display", "block");
-            menu.css("top", offset.top);
-            menu.css("left", offset.left + $(this).width() - resendBtn.width() + 10);
-            // 设置复制内容
-            resendBtn.attr("data-clipboard-text", $(this).text());
-        });
-        // 移出bubble-right和菜单按钮时才恢复
-        $(document).on("mouseleave", ".bubble-right", function () {
-            // 若进入了菜单按钮 不关闭
-            if (event.toElement.className === "menu-btn") {
-                return;
-            } else {
-                $("#menu").css("display", "none");
-            }
-        });
-        $(document).on("mouseleave", "#menu", function () { // 移出菜单按钮
-            $("#menu").css("display", "none");
-        });
-        $(document).on("click", "#resend-btn", function () {
-            // 渲染到输入框
-            let text = $(this).attr("data-clipboard-text");
-            $("#textarea").val(text);
-            // 模拟点击事件
-            $("#send-btn").click();
-            // 光标回归
-            $("#textarea").focus();
-        });
-        $(document).on("mousewheel DOMMouseScroll", function (e) {
-            // 当鼠标滚动时，隐藏菜单
-            $("#menu").css("display", "none");
-        });
-
-        $("#newchat").click(function () {
-            console.log("请输入会话名称");
-            let name = prompt("请输入会话名称");
-            if (name === null) {
-                return;
-            }
-            let selectedChatId;
-            $.ajax({
-                url: "/newChat",
-                type: "Get",
-                dataType: "json",
-                data: {
-                    "name": name,
-                    "time": get_time_str(new Date())
-                },
-                success: function (data) {
-                    console.log(data);
-                    if (data.code === 200) {
-                        let html = '<div class="chat" id=' + data.data.id + ' data-name=' + data.data.name + ' data-selected=' + data.data.selected + '>' + data.data.name + '</div>';
-                        {#newchat.remove();#}
-                        $(".chat-list").append(html);
-                        $(".chat-list").append(newchat);
-                    }
-                }
-            })
-        })
-        $(".chat-list").on('click', '.chat', function () {
-            let id = this.id;
-            let click = this;
-            console.log(id);
-            $.ajax({
-                url: "/selectChat",
-                type: "Get",
-                dataType: "json",
-                data: {     // get 方法时 data放置于路径 ?id=
-                    "id": id
-                },
-                success: function (data) {
-                    console.log(data);
-                    if (data.code === 200) {
-                        $("#" + selectedChatId).removeClass("selected");
-                        selectedChatId = id;
-                        $(click).addClass("selected");
-                        $('.content').empty();
-                        if ($("#" + selectedChatId).data('name') !== '默认对话') {
-                            $("#del-btn").html("删除对话");
-                        } else {
-                            $("#del-btn").html("删除聊天记录");
-                        }
-                        loadHistory();
-                        getMode();
-                    }
-                }
-            })
-        })
-
-        let returnMessageAjax = null;
-
-        function get_time_str(time) {
-            let year = time.getFullYear(); //得到年份
-            let month = time.getMonth() + 1;//得到月份
-            let date = time.getDate();//得到日期
-            let hour = time.getHours();//得到小时
-            if (hour < 10) hour = "0" + hour;
-            let minu = time.getMinutes();//得到分钟
-            if (minu < 10) minu = "0" + minu;
-            return year + "年" + month + "月" + date + "日 " + hour + ":" + minu
         }
+    });
+    $(document).on("mouseleave", "#menu", function () {
+        $("#menu").css("display", "none");
+    });
+    $(document).on("click", "#copy-btn", function () {
+        let clipboard = new ClipboardJS('#copy-btn');
+        clipboard.on('success', function (e) {
+            console.log(e);
+            // 将显示字符更改为复制成功，一秒后改回
+            $("#copy-btn").text("复制成功");
+            setTimeout(function () {
+                $("#copy-btn").text("复制");
+            }, 2000);
+        });
+        clipboard.on('error', function (e) {
+            console.log(e);
+        });
+        // 光标回归
+        $("#textarea").focus();
+    });
 
+    // 当鼠标移动到 bubble-right时显示重发按钮
+    $(document).on("mouseover", ".bubble-right", function () {
+        let menu = $("#menu");
+        let resendBtn = $("#resend-btn");
+        let offset = $(this).offset();
+        // 右上角显示
+        $("#copy-btn").hide();
+        resendBtn.show();
+        menu.css("display", "block");
+        menu.css("top", offset.top);
+        menu.css("left", offset.left + $(this).width() - resendBtn.width() + 10);
+        // 设置复制内容
+        resendBtn.attr("data-clipboard-text", $(this).text());
+    });
+    // 移出bubble-right和菜单按钮时才恢复
+    $(document).on("mouseleave", ".bubble-right", function () {
+        // 若进入了菜单按钮 不关闭
+        if (event.toElement.className === "menu-btn") {
+            return;
+        } else {
+            $("#menu").css("display", "none");
+        }
+    });
+    $(document).on("mouseleave", "#menu", function () { // 移出菜单按钮
+        $("#menu").css("display", "none");
+    });
+    $(document).on("click", "#resend-btn", function () {
+        // 渲染到输入框
+        let text = $(this).attr("data-clipboard-text");
+        $("#textarea").val(text);
+        // 模拟点击事件
+        $("#send-btn").click();
+        // 光标回归
+        $("#textarea").focus();
+    });
+    $(document).on("mousewheel DOMMouseScroll", function (e) {
+        // 当鼠标滚动时，隐藏菜单
+        $("#menu").css("display", "none");
+    });
+</script>
+
+<script>
+    MathJax.Hub.Config({        // 公式配置
+        showProcessingMessages: false, //关闭js加载过程信息
+        messageStyle: "none", //不显示信息
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+            inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+            displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+            skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+        },
+        "HTML-CSS": {
+            availableFonts: ["STIX", "TeX"], //可选字体
+            showMathMenu: false //关闭右击菜单显示
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    window.onload = function () { // 页面加载完成后, 光标自动定位到输入框
+        document.getElementById('textarea').focus()
+    }
+
+    function getMode() {
         $.ajax({
-            url: "/show_quotas",
+            url: "/getMode",
             type: "GET",
+            dataType: "json",
             success: function (data) {
-                $("#quota_info").html(data)
+                console.log(data);
+                if (data.mode === "normal") {
+                    $("#chmod-btn").text("当前为普通对话");
+                } else {
+                    $("#chmod-btn").text("当前为连续对话");
+                }
             }
         })
+    }
 
-        let last_time = 0
-        $("#send-btn").click(function () {
-            console.log("click")
-            var text = $("#textarea").val();
-            console.log(text);
-            if (text == "") {
-                alert("请输入内容");
-                return;
-            }
-            let html = ''
-            let send_time = new Date();
-            let send_time_str = '';
-            if (send_time.getTime() - last_time > 1000 * 60 * 5) {
-                // 以'%Y年%#m月%#d日 %H:%M'格式显示时间
-                html += '<div class="item item-center"><span>' + get_time_str(send_time) + '</span></div>';
-                last_time = send_time.getTime();
-                send_time_str = get_time_str(send_time);
-            }
-            html += '<div class="item item-right"><div class="bubble bubble-right markdown">'
-                + marked.marked(text)
-                + '</div><div class="avatar"><img src="../static/asset/xiaoxin.jpg" /></div></div>';
-            $(".content").append(html);
-            $("#textarea").val("");
-            $(".content").scrollTop($(".content")[0].scrollHeight);
-            if (text.startsWith('new:'))
-                send_time_str = get_time_str(send_time)
-            let chat_item = $('<div class="item item-left">' +
-                '<div class="avatar"><img src="../static/asset/chatgpt.png" /></div>' +
-                '<div class="bubble bubble-left markdown">正在等待回复</div>' +
-                '</div>')
-            $(".content").append(chat_item);
-            $(".content").scrollTop($(".content")[0].scrollHeight);
-            let get_times = 0;
+    getMode();
 
-            let show_quotas_flag = true;
-            returnMessageAjax = $.ajax({
-                url: "/returnMessage",
-                data: {"question": text},
-                type: "Post",
-                dataType: "json",
-                xhrFields: {
-                    onprogress: function (e) {
-                        let response = e.currentTarget.response;
-                        console.log(response);
-                        if(show_quotas_flag){
-                            $.ajax({
-                                url: "/show_quotas",
-                                type: "GET",
-                                success: function (data) {
-                                    $("#quota_info").html(data)
-                                }
-                            })
-                            show_quotas_flag = false;
-                        }
+    function get_time_str(time) {
+        let year = time.getFullYear(); //得到年份
+        let month = time.getMonth() + 1;//得到月份
+        let date = time.getDate();//得到日期
+        let hour = time.getHours();//得到小时
+        if (hour < 10) hour = "0" + hour;
+        let minu = time.getMinutes();//得到分钟
+        if (minu < 10) minu = "0" + minu;
+        return year + "年" + month + "月" + date + "日 " + hour + ":" + minu
+    }
 
-                        let div = document.createElement('div');
-                        div.innerHTML = marked.marked(response);
-                        MathJax.Hub.Typeset(div);
-                        chat_item.find(".bubble").empty();
-                        chat_item.find(".bubble").append(div);
-                        $(".content").scrollTop($(".content")[0].scrollHeight);
+    function loadHistory() {
+        $.ajax({
+            url: "/loadHistory",
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                console.log(data);
+                let messages = data.data;
+                var html = "";
+                for (var i = 0; i < messages.length; i++) {
+                    if (messages[i].role === "user") {
+                        html += '<div class="item item-right"><div class="bubble bubble-right">' + messages[i].content + '</div><div class="avatar"><img src="../static/asset/people.jpg" /></div></div>';
+                    } else if (messages[i].role === "openai") {
+                        html += '<div class="item item-left"><div class="avatar"><img src="../static/asset/chatgpt.png" /></div><div class="bubble bubble-left markdown">' + marked.marked(messages[i].content) + '</div></div>';
                     }
                 }
-            });
+                $(".content").append(html);
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, $(".content").get()]);   // 异步转换 放入队列中
+                $(".content").scrollTop($(".content")[0].scrollHeight);
+
+            }
         });
+    }
 
-    </script>
-{% endblock %}
+    loadHistory();
 
-{% block myjavascript %}
-    <script type="text/javascript">
-        $(function () {
-            $.ajax({
-                url: "/show_quotas",
-                type: "GET",
-                success: function (data) {
-                    $("#quota_info").html(data)
-                }
-            })
+    let selectedChatId;
 
-            $("#submitbtn").click(function () {
-                $("#submitbtn").prop("disabled", true)
-                $("#result").html("请求中，加载中...")
-                {#流式输出结果#}
-                // 用EventSource的方式一直发送GET请求
-                var source = new EventSource("/chatgpt-clone?question=" + $("#question").val())
-                console.log(source)
-                var begin_output = false
-                source.onmessage = function (event) {
-                    if (begin_output == false) {
-                        begin_output = true
-                        $("#result").html("")
+    function loadChats() {
+        $.ajax({
+            url: "/loadChats",
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                console.log(data);
+                let chats = data.data;
+                let html = ""
+                for (let i = 0; i < chats.length; i++) {
+                    console.log(chats[i].name)
+                    console.log(chats[i].selected)
+                    if (chats[i].selected === true) {
+                        selectedChatId = chats[i].id;
                     }
-                    if (event.data == "[DONE]") {
-                        source.close()
-                        $("#submitbtn").prop("disabled", false)
+                    html += '<div class="chat" id=' + chats[i].id + '>' + chats[i].name + '</div>';
+                }
+                if (chats.length === 0) {
+
+                } else {
+                    $(".chat-list").append(html);
+                    $(".chat-list").append($("#newchat"))
+                }
+            }
+        })
+    }
+
+    loadChats()
+
+    $(".chat-list").on('click', '.chat', function () {
+        let id = this.id;
+        let click = this;
+        console.log(id);
+        $.ajax({
+            url: "/selectChat",
+            type: "GET",
+            dataType: "json",
+            data: {"id": id},
+            success: function (data) {
+                console.log(data);
+                if (data.code === 200) {
+                    console.log(selectedChatId)
+                    console.log(click)
+                    $("#" + selectedChatId).removeClass("selected");
+                    var id_split = id.split("data-name")[0];
+                    selectedChatId = id_split;
+                    $(click).addClass("selected");
+                    $('.content').empty();
+
+                    console.log($("#" + selectedChatId).text())
+                    if ($("#" + selectedChatId).text() !== '默认对话') {
+                        $("#del-btn").html("删除聊天记录");
+                    } else {
+                        $("#del-btn").html("删除所有对话");
+                    }
+                    loadHistory();
+                }
+            }
+        })
+    })
+
+    $("#newchat").click(function () {
+        console.log("请输入会话名称");
+        let name = prompt("请输入会话名称");
+        if (name === null) {
+            return;
+        }
+        $.ajax({
+            url: "/newChat",
+            type: "GET",
+            dataType: "json",
+            data: {
+                "name": name,
+                "time": get_time_str(new Date())
+            },
+            success: function (data) {
+                console.log(data);
+                if (data.code === 200) {
+                    let html = '<div class="chat" id=' + data.data.id + ' data-name=' + data.data.name + ' data-selected=' + data.data.selected + '>' + data.data.name + '</div>';
+                    $(".chat-list").append(html);
+                    $(".chat-list").append($("#newchat"));
+                    $("#" + selectedChatId).removeClass("selected");
+                    selectedChatId = data.data.id;
+                    $("#" + selectedChatId).addClass("selected");
+                    $('.content').empty();
+
+                    loadHistory();
+                }
+            }
+        })
+    })
+
+    let returnMessageAjax = null;
+    $.ajax({
+        url: "/show_quotas",
+        type: "GET",
+        success: function (data) {
+            $("#quota_info").html(data)
+        }
+    })
+
+    let last_time = 0
+    $("#send-btn").click(function () {
+        console.log("click")
+        var text = $("#textarea").val();
+        console.log(text);
+        if (text == "") {
+            alert("请输入内容");
+            return;
+        }
+        let html = ''
+        let send_time = new Date();
+        let send_time_str = '';
+        if (send_time.getTime() - last_time > 1000 * 60 * 5) {
+            // 以'%Y年%#m月%#d日 %H:%M'格式显示时间
+            html += '<div class="item item-center"><span>' + get_time_str(send_time) + '</span></div>';
+            last_time = send_time.getTime();
+            send_time_str = get_time_str(send_time);
+        }
+        html += '<div class="item item-right"><div class="bubble bubble-right markdown">'
+            + marked.marked(text)
+            + '</div><div class="avatar"><img src="../static/asset/people.jpg" /></div></div>';
+        $(".content").append(html);
+        $("#textarea").val("");
+        $(".content").scrollTop($(".content")[0].scrollHeight);
+        if (text.startsWith('new:'))
+            send_time_str = get_time_str(send_time)
+        let chat_item = $('<div class="item item-left">' +
+            '<div class="avatar"><img src="../static/asset/chatgpt.png" /></div>' +
+            '<div class="bubble bubble-left markdown">正在等待回复</div>' +
+            '</div>')
+        $(".content").append(chat_item);
+        $(".content").scrollTop($(".content")[0].scrollHeight);
+
+        let show_quotas_flag = true;
+        returnMessageAjax = $.ajax({
+            url: "/returnMessage",
+            data: {
+                "question": text,
+                "send_time": send_time_str
+            },
+            type: "POST",
+            dataType: "json",
+            xhrFields: {
+                onprogress: function (e) {
+                    let response = e.currentTarget.response;
+                    console.log(response);
+                    if (show_quotas_flag) {
                         $.ajax({
                             url: "/show_quotas",
                             type: "GET",
@@ -707,23 +760,74 @@
                                 $("#quota_info").html(data)
                             }
                         })
-                    } else {
-                        $("#result").html($("#result").html() + event.data) //每次追加数据
+                        show_quotas_flag = false;
                     }
+                    $("#stop-btn").show();
+                    let div = document.createElement('div');
+                    div.innerHTML = marked.marked(response);
+                    MathJax.Hub.Typeset(div);
+                    chat_item.find(".bubble").empty();
+                    chat_item.find(".bubble").append(div);
+                    $(".content").scrollTop($(".content")[0].scrollHeight);
+                },
+                onload: function (e) {
+                    $("#stop-btn").hide();
                 }
+            },
+            timeout: 1000 * 60 * 2,
+            complete: function (XMLHttpRequest, status) {
+                if (status === 'timeout') {
+                    alert("请求超时");
+                }
+                $("#stop-btn").hide();
+            }
+        });
+    });
 
-                {#一次性输出结果#}
-                {#$.ajax({#}
-                {#    url: "/chatgpt-clone",#}
-                {#    type: "POST",#}
-                {#    data: {"question": $("#question").val()},#}
-                {#    success: function(data){#}
-                {#        $("#result").html(data)#}
-                {#    }#}
-                //{#})#}
-            })
-        })
-    </script>
+    $("#stop-btn").click(function () {
+        //停止returnMessage请求
+        if (returnMessageAjax != null) {
+            returnMessageAjax.abort();
+            returnMessageAjax = null;
+        }
+        $("#stop-btn").hide();
+    });
+
+    $('#del-btn').click(function () {
+        if (confirm("确认删除吗？")) {
+            $.get("/deleteHistory", function (data) {
+                console.log(data);
+            });
+            window.location.reload()
+        }
+    });
+
+    $('#chmod-btn').click(function (data) {
+        if ($("#chmod-btn").text() === "当前为普通对话") {
+            if (data.code === -1) {
+                alert(data.msg)
+            } else {
+                $.get("/changeMode/continuous", function (data) {
+                    var html = '<div class="item item-center"><span>' + data.data.content + '</span></div>'
+                    $(".content").append(html);
+                    $(".content").scrollTop($(".content")[0].scrollHeight);
+                });
+            }
+            $("#chmod-btn").text("当前为连续对话");
+        } else {
+            if (data.code === -1) {
+                alert(data.msg)
+            } else {
+                $.get("/changeMode/normal", function (data) {
+                    var html = '<div class="item item-center"><span>' + data.data.content + '</span></div>'
+                    $(".content").append(html);
+                    $(".content").scrollTop($(".content")[0].scrollHeight);
+                });
+            }
+            $("#chmod-btn").text("当前为普通对话");
+        }
+    });
+</script>
 {% endblock %}
 
 

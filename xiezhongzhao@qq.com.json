@@ -1,0 +1,17 @@
+{
+    "chats": {
+        "0": {
+            "name": "默认对话",
+            "chat_with_history": "",
+            "have_chat_context": "",
+            "messages_history": [
+                {
+                    "role": "openai",
+                    "content": "您想聊什么？"
+                }
+            ]
+        }
+    },
+    "selected_chat_id": "0",
+    "default_chat_id": "0"
+}
