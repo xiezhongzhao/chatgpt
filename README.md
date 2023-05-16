@@ -24,7 +24,7 @@
 * 加入免责申明
 * 适应手机界面
 
-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
+
 #### 4. 参考
 [flask实现验证码](https://www.cnblogs.com/huxiansheng/p/11987259.html)
 
