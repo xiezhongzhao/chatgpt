@@ -7,9 +7,10 @@
     }
 
     .all-container {
-        position: absolute;
-        height: 90%;
-        width: 90%;
+        /*position: absolute;*/
+        height: 800px;
+        width: 1500px;
+        margin-left: 0px;
         padding: 1px;
         display: flex;
         border: #aaaaaa;
@@ -20,7 +21,7 @@
     }
 
     .left-container {
-        height: 85%;
+        height: 100%;
         width: 16%;
         min-width: 100px;
         max-width: 200px;
@@ -75,7 +76,7 @@
     }
 
     .right-container {
-        height: 85%;
+        height: 100%;
         width: 80%;
         min-width: 220px;
         border-radius: 4px;
@@ -404,7 +405,7 @@
             <div class="button-area">
                 <button id="stop-btn" class="btn btn-primary" style="display: none">停止生成</button>
                 <button id="del-btn" class="btn btn-primary">删除聊天记录</button>
-                <button id="chmod-btn" class="btn btn-primary">当前为普通对话</button>
+<!--                <button id="chmod-btn" class="btn btn-primary">当前为普通对话</button>-->
                 <button id="send-btn" name="send-btn" class="btn btn-primary">
                     <span>发 送</span>
                     <img src="../static/asset/send.svg">
@@ -577,32 +578,6 @@
         return year + "年" + month + "月" + date + "日 " + hour + ":" + minu
     }
 
-    function loadHistory() {
-        $.ajax({
-            url: "/loadHistory",
-            type: "GET",
-            dataType: "json",
-            success: function (data) {
-                console.log(data);
-                let messages = data.data;
-                var html = "";
-                for (var i = 0; i < messages.length; i++) {
-                    if (messages[i].role === "user") {
-                        html += '<div class="item item-right"><div class="bubble bubble-right">' + messages[i].content + '</div><div class="avatar"><img src="../static/asset/people.jpg" /></div></div>';
-                    } else if (messages[i].role === "openai") {
-                        html += '<div class="item item-left"><div class="avatar"><img src="../static/asset/chatgpt.png" /></div><div class="bubble bubble-left markdown">' + marked.marked(messages[i].content) + '</div></div>';
-                    }
-                }
-                $(".content").append(html);
-                MathJax.Hub.Queue(["Typeset", MathJax.Hub, $(".content").get()]);   // 异步转换 放入队列中
-                $(".content").scrollTop($(".content")[0].scrollHeight);
-
-            }
-        });
-    }
-
-    loadHistory();
-
     let selectedChatId;
 
     function loadChats() {
@@ -631,8 +606,33 @@
             }
         })
     }
-
     loadChats()
+
+    function loadHistory() {
+        $.ajax({
+            url: "/loadHistory",
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                console.log(data);
+                let messages = data.data;
+                var html = "";
+                for (var i = 0; i < messages.length; i++) {
+                    if (messages[i].role === "user") {
+                        html += '<div class="item item-right"><div class="bubble bubble-right">' + messages[i].content + '</div><div class="avatar"><img src="../static/asset/people.jpg" /></div></div>';
+                    } else if (messages[i].role === "assistant") {
+                        html += '<div class="item item-left"><div class="avatar"><img src="../static/asset/chatgpt.png" /></div><div class="bubble bubble-left markdown">' + marked.marked(messages[i].content) + '</div></div>';
+                    }
+                }
+                $(".content").append(html);
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, $(".content").get()]);   // 异步转换 放入队列中
+                $(".content").scrollTop($(".content")[0].scrollHeight);
+
+            }
+        });
+    }
+    loadHistory();
+
 
     $(".chat-list").on('click', '.chat', function () {
         let id = this.id;
@@ -780,6 +780,14 @@
                     alert("请求超时");
                 }
                 $("#stop-btn").hide();
+
+                $.ajax({
+                    url: "/saveChat",
+                    type: "GET",
+                    success: function (data) {
+
+                    }
+                })
             }
         });
     });

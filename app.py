@@ -26,7 +26,7 @@ import userconfig
 from verification import check_code
 from mail import emailSendInfo
 
-openai.api_key = "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"
+openai.api_key = "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"
 
 app = Flask(__name__)
 app.config['SECRET_KEY']  = os.urandom(24)
@@ -39,9 +39,9 @@ def init_user_info(username):
     lock.acquire()
     datajson = dict()
     datajson["chats"] = {"0": {"name": "默认对话",
-                               "chat_with_history": False,
+                               "chat_with_history": True,
                                "have_chat_context": 0,
-                               "messages_history": [{"role": "openai", "content": "您想聊什么？"}]}}
+                               "messages_history": [{"role": "assistant", "content": "您想聊什么？"}]}}
     datajson["selected_chat_id"] = str(0)
     datajson["default_chat_id"] = str(0)
     with open(username+".json", "w", encoding="utf-8") as f:
@@ -68,14 +68,6 @@ async def save_user_info():
     with open(username+".json", "w", encoding="utf-8") as f:
         json.dump(user_info, f, ensure_ascii=False, indent=4)
     lock.release()
-
-def update_selected_chat(username, chat_id):
-    lock.acquire()
-    with open(username+".json", "w", encoding="utf-8") as f:
-        user_info["selected_chat_id"] = chat_id
-        json.dump(user_info, f, ensure_ascii=False, indent=4)
-    lock.release()
-    return user_info
 
 def get_response_from_ChatGPT_API(message_context):
     try:
@@ -120,7 +112,7 @@ def get_response_stream_generate_from_ChatGPT_API(message_context, messages_hist
         print("response: {}".format(response))
         def generate():
             stream_content = str()
-            one_message = {"role": "openai", "content": stream_content}
+            one_message = {"role": "assistant", "content": stream_content}
             messages_history.append(one_message)
             i = 0
             for chunk in response:
@@ -154,7 +146,7 @@ def get_message_context(message_history, have_chat_context, chat_with_history):
         valid_num = 0
         for i in range(len(message_history) - 1, -1, -1): # 逆序遍历
             message = message_history[i]
-            if message['role'] in {'openai', 'user'}:
+            if message['role'] in {'assistant', 'user'}:
                 valid_start = i
                 valid_num += 1
             if valid_num >= num:
@@ -162,7 +154,7 @@ def get_message_context(message_history, have_chat_context, chat_with_history):
 
         for i in range(valid_start, len(message_history)):
             message = message_history[i]
-            if message['role'] in {'openai', 'user'}:
+            if message['role'] in {'assistant', 'user'}:
                 message_context.append(message)
                 total += len(message['content'])
     else:
@@ -174,12 +166,17 @@ def get_message_context(message_history, have_chat_context, chat_with_history):
 
 def handle_message_get_response_stream(message, messages_history, have_chat_context, chat_with_history):
     messages_history.append({"role": "user", "content": message})
-    asyncio.run(save_user_info())
     message_context = get_message_context(messages_history, have_chat_context, chat_with_history)
     ### 输入上下文信息给openai推理
     print("message_context: ", message_context)
     generate = get_response_stream_generate_from_ChatGPT_API(message_context, messages_history)
+    asyncio.run(save_user_info())
     return generate
+
+@app.route('/saveChat', methods=["GET", "POST"])
+def saveChat():
+    asyncio.run(save_user_info())
+    return {"data": "success"}
 
 @app.route('/getMode', methods=["GET"])
 def get_mode():
@@ -297,7 +294,7 @@ def new_chat():
     user_info["selected_chat_id"] = new_chat_id
     user_info["chats"][new_chat_id] = \
                                     {"name": name,
-                                     "chat_with_history": False,
+                                     "chat_with_history": True,
                                      "have_chat_context": 0,
                                      "messages_history": []}
 
@@ -351,7 +348,6 @@ def chatgpt_clone():
                                                       chat_with_history)
         if chat_with_history:
             user_info["chats"][chat_id]["have_chat_context"] += 1
-        asyncio.run(save_user_info())
         return app.response_class(generate(), mimetype='application/json')
 
 

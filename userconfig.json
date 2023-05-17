@@ -2,13 +2,13 @@
     "xiezhongzhao@qq.com": {
         "password": "123",
         "quota": 50,
-        "visited": 10,
+        "visited": 14,
         "remark": "note"
     },
     "2234309583@qq.com": {
         "password": "123",
-        "quota": 100,
-        "visited": 82,
+        "quota": 8000,
+        "visited": 95,
         "remark": "note"
     },
     "xiezhongzhao01@gmail.com": {
@@ -25,8 +25,8 @@
     },
     "huhui@qq.com": {
         "password": "12345",
-        "quota": 5,
-        "visited": 0,
+        "quota": 50,
+        "visited": 2,
         "remark": "note"
     }
 }

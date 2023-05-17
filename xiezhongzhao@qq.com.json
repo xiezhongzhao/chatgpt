@@ -2,12 +2,36 @@
     "chats": {
         "0": {
             "name": "默认对话",
-            "chat_with_history": "",
-            "have_chat_context": "",
+            "chat_with_history": false,
+            "have_chat_context": 0,
             "messages_history": [
                 {
                     "role": "openai",
                     "content": "您想聊什么？"
+                },
+                {
+                    "role": "user",
+                    "content": "c++实现回溯模板"
+                },
+                {
+                    "role": "user",
+                    "content": "c++实现回溯模板"
+                },
+                {
+                    "role": "system",
+                    "content": "切换为连续对话"
+                },
+                {
+                    "role": "system",
+                    "content": "切换为普通对话"
+                },
+                {
+                    "role": "user",
+                    "content": "c++实现回溯模板"
+                },
+                {
+                    "role": "user",
+                    "content": "采用c++编写回溯算法"
                 }
             ]
         }
