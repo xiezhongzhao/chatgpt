@@ -18,7 +18,6 @@ from flask import session, make_response
 
 import threading
 import asyncio
-import pickle
 from io import BytesIO
 import base64
 
@@ -26,7 +25,7 @@ import userconfig
 from verification import check_code
 from mail import emailSendInfo
 
-openai.api_key = "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"
+openai.api_key = "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"
 
 app = Flask(__name__)
 app.config['SECRET_KEY']  = os.urandom(24)
@@ -475,7 +474,8 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=12346, debug=True)
+    app.run(host="0.0.0.0", port=12345, debug=True)
+
 
 
 
