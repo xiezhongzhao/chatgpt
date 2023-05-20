@@ -633,7 +633,6 @@
     }
     loadHistory();
 
-
     $(".chat-list").on('click', '.chat', function () {
         let id = this.id;
         let click = this;
@@ -665,6 +664,18 @@
             }
         })
     })
+
+    $("#del-btn").click(function () {
+        if (confirm("确认删除吗？")) {
+            $.ajax({
+                url: "/deleteHistory",
+                type: "GET",
+                success: function (data) {
+                    window.location.reload()
+                }
+            })
+        }
+    });
 
     $("#newchat").click(function () {
         console.log("请输入会话名称");
@@ -702,7 +713,7 @@
         url: "/show_quotas",
         type: "GET",
         success: function (data) {
-            $("#quota_info").html(data)
+            $("#quota_info").html(data);
         }
     })
 
@@ -801,14 +812,6 @@
         $("#stop-btn").hide();
     });
 
-    $('#del-btn').click(function () {
-        if (confirm("确认删除吗？")) {
-            $.get("/deleteHistory", function (data) {
-                console.log(data);
-            });
-            window.location.reload()
-        }
-    });
 
     $('#chmod-btn').click(function (data) {
         if ($("#chmod-btn").text() === "当前为普通对话") {
