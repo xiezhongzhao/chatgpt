@@ -25,7 +25,7 @@ import userconfig
 from verification import check_code
 from mail import emailSendInfo
 
-openai.api_key = "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"
+openai.api_key = "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"
 
 app = Flask(__name__)
 app.config['SECRET_KEY']  = os.urandom(24)
@@ -47,18 +47,21 @@ def init_user_info(username):
             json.dump(datajson, f, ensure_ascii=False, indent=4)
 
 def get_user_info(username):
-    global user_info #设置为全局变量
     with lock:
         with open(username+".json", "r", encoding="utf-8") as f:
             user_info = json.load(f)
     return user_info
 
-async def save_user_info(username):
+async def save_user_info(username, user_info=None):
     '''
     异步存储user_info
     :return:
     '''
     await asyncio.sleep(0)
+    if user_info is None:
+        user_info = get_user_info(session.get('username'))
+    else:
+        user_info = user_info
     with lock:
         with open(username+".json", "w", encoding="utf-8") as f:
             json.dump(user_info, f, ensure_ascii=False, indent=4)
@@ -164,12 +167,20 @@ def handle_message_get_response_stream(message, messages_history, have_chat_cont
     ### 输入上下文信息给openai推理
     print("message_context: ", message_context)
     generate = get_response_stream_generate_from_ChatGPT_API(message_context, messages_history)
-    asyncio.run(save_user_info(session.get("username")))
-    return generate
+    return generate, messages_history, message_context
 
 @app.route('/saveChat', methods=["GET", "POST"])
 def saveChat():
-    asyncio.run(save_user_info(session.get("username")))
+    if request.method == "POST":
+        content = request.form.get("response")
+    if request.method == "GET":
+        content = request.args.get("response")
+
+    user_info = get_user_info(session.get('username'))
+    chat_id = user_info["selected_chat_id"]
+    user_info["chats"][chat_id]["messages_history"].append({"role": "assistant",
+                                                            "content": content})
+    asyncio.run(save_user_info(session.get("username"), user_info=user_info))
     return {"data": "success"}
 
 @app.route('/getMode', methods=["GET"])
@@ -179,13 +190,12 @@ def get_mode():
     :return:
     """
     user_info = get_user_info(session.get('username'))
-    with lock:
-        chat_id = user_info["selected_chat_id"]
-        chat_with_history = user_info["chats"][chat_id]["chat_with_history"]
-        if chat_with_history:
-            return {"mode": "continuous"}
-        else:
-            return {"mode": "normal"}
+    chat_id = user_info["selected_chat_id"]
+    chat_with_history = user_info["chats"][chat_id]["chat_with_history"]
+    if chat_with_history:
+        return {"mode": "continuous"}
+    else:
+        return {"mode": "normal"}
 
 @app.route('/changeMode/<status>', methods=["GET"])
 def change_mode(status):
@@ -217,12 +227,12 @@ def load_messages():
     :return:
     '''
     user_info = get_user_info(session.get('username'))
-    with lock:
-        chat_id = user_info["selected_chat_id"]
-        print("chat_id: ", chat_id)
-        messages_history = user_info["chats"][chat_id]["messages_history"]
-        print(f"用户({session.get('username')})加载聊天记录，共{len(messages_history)}条记录")
-        return {"code": 0, "data": messages_history, "message": ""}
+    print("load_history user_info: ", user_info)
+    chat_id = user_info["selected_chat_id"]
+    print("load_history chat_id: ", chat_id)
+    messages_history = user_info["chats"][chat_id]["messages_history"]
+    print(f"用户({session.get('username')})加载聊天记录，共{len(messages_history)}条记录")
+    return {"code": 0, "data": messages_history, "message": ""}
 
 @app.route('/deleteHistory', methods=["GET"])
 def delete_history():
@@ -233,7 +243,7 @@ def delete_history():
     user_info = get_user_info(session.get('username'))
     chat_id = user_info["selected_chat_id"]
     default_chat_id = user_info['default_chat_id']
-    print("chat_id: ", chat_id)
+    print("delete chat_id: ", chat_id)
     print("default_chat_id: ", default_chat_id)
     if default_chat_id == chat_id:
         print("清空历史记录")
@@ -242,9 +252,8 @@ def delete_history():
         print("删除聊天对话")
         user_info["chats"].pop(chat_id)
     user_info["selected_chat_id"] = default_chat_id
-    asyncio.run(save_user_info(session.get('username')))
+    asyncio.run(save_user_info(session.get('username'), user_info=user_info))
     return "delete"
-
 
 @app.route('/loadChats', methods=["GET", "POST"])
 def load_chats():
@@ -253,6 +262,7 @@ def load_chats():
     :return: 聊天联系人
     '''
     user_info = get_user_info(session.get('username'))
+    print("load_chat user_info: ", user_info)
     chats = []
     for chat_id, chat_info in user_info['chats'].items():
         chats.append(
@@ -271,8 +281,10 @@ def select_chat():
     chat_id = request.args.get("id")
     chat_id = chat_id.split("data-name")[0]
     user_info = get_user_info(session.get('username'))
+    print("select_chat user_info: ", user_info)
+
     user_info["selected_chat_id"] = chat_id
-    asyncio.run(save_user_info(session.get("username")))
+    asyncio.run(save_user_info(session.get("username"), user_info=user_info))
     return {"code": 200, "msg": "选择聊天对象成功"}
 
 @app.route('/newChat', methods=['GET'])
@@ -285,6 +297,7 @@ def new_chat():
     time = request.args.get("time")
     username = session.get("username")
     user_info = get_user_info(username)
+    print("new_chat user_info: ", user_info)
 
     new_chat_id = str(uuid.uuid1())
     user_info["selected_chat_id"] = new_chat_id
@@ -294,7 +307,7 @@ def new_chat():
                                      "have_chat_context": 0,
                                      "messages_history": []}
 
-    asyncio.run(save_user_info(session.get("username")))
+    asyncio.run(save_user_info(session.get("username"), user_info=user_info))
     print("新建聊天对象: {}".format(name))
     return {"code": 200, "data": {"name": name, "id": new_chat_id, "selected": True}}
 
@@ -307,7 +320,6 @@ def index():
 
 @app.route("/show_quotas", methods=["GET"])
 def show_quotas():
-    global username
     if "username" not in session:
         return redirect("/login")
     username = session["username"]
@@ -341,12 +353,17 @@ def chatgpt_clone():
     else: ### 处理聊天数据
         username = session.get("username")
         print("用户{}发送消息:{}".format(username, question))
-        generate = handle_message_get_response_stream(question,
-                                                      messages_history,
-                                                      have_chat_context,
-                                                      chat_with_history)
+        generate, messages_history, _ = \
+            handle_message_get_response_stream(question,
+                                               messages_history,
+                                               have_chat_context,
+                                               chat_with_history)
         if chat_with_history:
             user_info["chats"][chat_id]["have_chat_context"] += 1
+
+        user_info["chats"][chat_id]["messages_history"] = messages_history
+        print("save messages: ", messages_history)
+        asyncio.run(save_user_info(session.get("username"), user_info=user_info))
         return app.response_class(generate(), mimetype='application/json')
 
 @app.route("/captcha")

@@ -751,6 +751,7 @@
         $(".content").scrollTop($(".content")[0].scrollHeight);
 
         let show_quotas_flag = true;
+        let result;
         returnMessageAjax = $.ajax({
             url: "/returnMessage",
             data: {
@@ -763,6 +764,7 @@
                 onprogress: function (e) {
                     let response = e.currentTarget.response;
                     console.log(response);
+                    result = response;
                     if (show_quotas_flag) {
                         $.ajax({
                             url: "/show_quotas",
@@ -794,6 +796,7 @@
 
                 $.ajax({
                     url: "/saveChat",
+                    data: {"response": result},
                     type: "GET",
                     success: function (data) {
 
